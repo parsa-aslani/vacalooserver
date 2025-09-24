@@ -1,0 +1,40 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  username String
+  password String
+  score    Int    @default(0)
+}
+
+model OfferAddWord {
+  id           Int    @id @default(autoincrement())
+  offeraddword String
+}
+
+model OfferRemoveWord {
+  id              Int    @id @default(autoincrement())
+  offerremoveword String
+}
+
+model FourLetterWord {
+  id   Int    @id @default(autoincrement())
+  word String
+}
+
+model FiveLetterWord {
+  id   Int    @id @default(autoincrement())
+  word String
+}
+
+model SixLetterWord {
+  id   Int    @id @default(autoincrement())
+  word String
+}
