@@ -9,16 +9,61 @@ app.use(cors());
 app.use(express.json());
 
 /* ---------- USERS ---------- */
-app.get("/users", async (req, res) => {
+app.get("/users/login", async (req, res) => {
+  const { username, password } = req.query;
+
   try {
-    const users = await prisma.user.findMany();
-    res.json(users);
+    if (!username || !password) {
+      return res
+        .status(400)
+        .json({ message: "Username and password are required" });
+    }
+
+    const user = await prisma.user.findFirst({
+      where: {
+        username: username,
+        password: password,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "Invalid username or password" });
+    }
+
+    res.json(user);
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching user:", error);
     res.status(500).json({ message: error.message });
   }
 });
+app.get("/users", async (req, res) => {
+  const { username, password } = req.query;
 
+  try {
+    if (username && password) {
+      const user = await prisma.user.findFirst({
+        where: {
+          username: username,
+          password: password,
+        },
+      });
+
+      if (!user) {
+        return res
+          .status(404)
+          .json({ message: "Invalid username or password" });
+      }
+
+      return res.json(user);
+    }
+
+    const users = await prisma.user.findMany();
+    res.json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ message: error.message });
+  }
+});
 app.get("/users/:id", async (req, res) => {
   const { id } = req.params;
   try {
